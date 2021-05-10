@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Encrypt</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+<style>
+body {
+  background-color: black;
+  text-align: center;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+
+div{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%); /* IE 9 */
+    -webkit-transform: translate(-50%, -50%); /* Chrome, Safari, Opera */	
+    width: 80%;
+}
+
+</style>
+</head>
+<body>
+
+<div>
+	<h3>Mensaje</h3>
+	<textarea id="myTextarea" rows="50" style="width: 100%;"> </textarea>
+
+
+		 <form>
+		      <label for="key">Clave:</label> 
+		      <input type="text" value="" id="key">
+		      <button type="button" onclick="encryptAndCopyLink()">Encriptar y copiar link</button>
+		 </form>
+
+	<br>
+
+	<form>
+	      <label for="linkMessage">Link generado:</label> 
+	      <input type="text" value="" id="linkMessage" style="width: 100%;">
+	</form>
+</div>
+
+
+</body>
+
+<script>
+
+
+var EncryptedMessage = location.search.split('EncryptedMessage=')[1];
+
+if (EncryptedMessage != null){
+
+    var txt;
+    var key = prompt("Ingrese la clave:", "");
+    if (key == null || key == "") {
+        alert("Clave invalida")
+    } else {
+ 
+       var bytes  = CryptoJS.AES.decrypt(EncryptedMessage, key);
+       var message = bytes.toString(CryptoJS.enc.Utf8);
+
+       alert(message)
+    }
+
+}
+
+function encryptAndCopyLink(){
+
+  var key = document.getElementById("key").value;
+  if(key == ""){
+    alert("Debe ingresar una clave")
+    return;
+  }
+
+  var message = document.getElementById("myTextarea");
+  var EncryptedMessage = CryptoJS.AES.encrypt(message.value, key);
+  var url_base = location.protocol + '//' + location.host + location.pathname
+  var EncryptedMessage = url_base + '?EncryptedMessage=' + EncryptedMessage
+  var linkMessage = document.getElementById("linkMessage");
+  linkMessage.setAttribute('value', EncryptedMessage);
+  linkMessage.select();
+  linkMessage.setSelectionRange(0, 99999)
+  document.execCommand("copy");
+  
+}
+</script>
+
+
+</html>
